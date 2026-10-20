@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Settings')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<h1 class="mb-1">Settings</h1>
+<p class="text-soft mb-4">Values come from <code>application.properties</code> or environment variables. Change them there and restart.</p>
+<table class="table bg-white" style="max-width:720px">
+  <tbody><tr th:each="s : ${settings}"><th th:text="${s.key}">Key</th><td th:text="${s.value}">Value</td></tr></tbody>
+</table>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

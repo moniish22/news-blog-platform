@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Archive')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<h1 class="mb-3">Archive</h1>
+<ul class="nav nav-pills mb-4 flex-wrap gap-1">
+  <li class="nav-item" th:each="m : ${months}">
+    <a class="nav-link" th:classappend="${m == selected} ? 'active bg-dark'" th:href="@{/articles/archive(year=${m.year},month=${m.monthValue})}" th:text="${@dateUtils.monthLabel(m)}">Month</a>
+  </li>
+</ul>
+<h2 class="h4 mb-3" th:text="${@dateUtils.monthLabel(selected)}">Month</h2>
+<div class="list-group mb-3">
+  <a class="list-group-item list-group-item-action d-flex justify-content-between" th:each="a : ${page.content}" th:href="@{/article/{s}(s=${a.slug})}">
+    <span th:text="${a.title}">Title</span><span class="meta" th:text="${@dateUtils.format(a.publishedAt)}">Date</span>
+  </a>
+</div>
+<p class="text-soft" th:if="${page.empty}">No articles were published this month.</p>
+<nav th:replace="~{fragments/layout :: pager(${page}, ${pageUrl})}"></nav>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${article.title})}"></head>
+<body>
+<div id="read-progress" aria-hidden="true"></div>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="row justify-content-center" th:with="shareUrl=${@mailConfig.baseUrl + '/article/' + article.slug}">
+<article class="col-lg-9">
+  <div class="article-head mb-4">
+    <a th:if="${article.category != null}" class="kicker" th:href="@{/category/{s}(s=${article.category.slug})}" th:text="${article.category.name}">Category</a>
+    <span class="badge ms-2" th:if="${article.status.name() != 'PUBLISHED'}" th:classappend="${'bg-' + article.status.badge}" th:text="${article.status.label + ' (preview)'}">Draft</span>
+    <h1 class="mt-2" th:text="${article.title}">Title</h1>
+    <p class="dek" th:text="${article.excerpt}">Excerpt</p>
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <span class="avatar" th:text="${@textUtils.initials(article.author.name)}">AB</span>
+      <div class="meta">
+        <a th:href="@{/authors/{id}(id=${article.author.id})}" th:text="${article.author.name}">Author</a><br>
+        <span th:text="${@dateUtils.format(article.publishedAt != null ? article.publishedAt : article.createdAt) + ' · ' + article.readingTime + ' min read · ' + article.views + ' views'}"></span>
+      </div>
+      <a th:if="${canEdit}" class="btn btn-sm btn-outline-ink ms-auto" th:href="@{/author/articles/{id}/edit(id=${article.id})}">Edit article</a>
+    </div>
+  </div>
+  <img th:if="${article.featuredImage != null}" th:src="${article.featuredImage}" class="article-hero mb-4" alt="">
+  <div class="prose" th:utext="${article.content}">Body</div>
+
+  <div class="mt-4"><a class="tag-chip" th:each="t : ${article.tags}" th:href="@{/tags/{s}(s=${t.slug})}" th:text="${'#' + t.name}">#tag</a></div>
+
+  <div class="d-flex flex-wrap gap-2 align-items-center border-top border-bottom py-3 my-4">
+    <form th:action="@{/article/{s}/like(s=${article.slug})}" method="post">
+      <button class="btn btn-sm" th:classappend="${liked} ? 'btn-signal' : 'btn-outline-ink'" type="submit" th:disabled="${liked or article.status.name() != 'PUBLISHED'}">
+        <i class="bi bi-hand-thumbs-up"></i> <span th:text="${liked ? 'Liked' : 'Like'} + ' (' + ${article.likes} + ')'">Like</span>
+      </button>
+    </form>
+    <form sec:authorize="isAuthenticated()" th:action="@{/article/{s}/save(s=${article.slug})}" method="post">
+      <button class="btn btn-sm btn-outline-ink" type="submit"><i class="bi bi-bookmark"></i> <span th:text="${saved ? 'Remove from reading list' : 'Save for later'}">Save</span></button>
+    </form>
+    <a sec:authorize="isAnonymous()" class="btn btn-sm btn-outline-ink" th:href="@{/login}"><i class="bi bi-bookmark"></i> Log in to save</a>
+    <span class="ms-md-auto meta">Share</span>
+    <a class="btn btn-sm btn-outline-secondary" data-share target="_blank" rel="noopener" th:href="@{https://twitter.com/intent/tweet(url=${shareUrl},text=${article.title})}" aria-label="Share on X"><i class="bi bi-twitter-x"></i></a>
+    <a class="btn btn-sm btn-outline-secondary" data-share target="_blank" rel="noopener" th:href="@{https://www.facebook.com/sharer/sharer.php(u=${shareUrl})}" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
+    <a class="btn btn-sm btn-outline-secondary" data-share target="_blank" rel="noopener" th:href="@{https://www.linkedin.com/sharing/share-offsite/(url=${shareUrl})}" aria-label="Share on LinkedIn"><i class="bi bi-linkedin"></i></a>
+    <a class="btn btn-sm btn-outline-secondary" data-share target="_blank" rel="noopener" th:href="@{https://wa.me/(text=${shareUrl})}" aria-label="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+    <button class="btn btn-sm btn-outline-secondary" type="button" data-copy-link>Copy link</button>
+  </div>
+
+  <div class="side-box d-flex gap-3 mb-5" th:if="${article.author.bio != null}">
+    <span class="avatar lg" th:text="${@textUtils.initials(article.author.name)}">AB</span>
+    <div><h2 class="h5 mb-1">About <a th:href="@{/authors/{id}(id=${article.author.id})}" th:text="${article.author.name}">Author</a></h2><p class="mb-0 text-soft" th:text="${article.author.bio}">Bio</p></div>
+  </div>
+
+  <section id="comments" th:if="${article.status.name() == 'PUBLISHED'}">
+    <h2 class="section-title" th:text="${'Discussion (' + comments.size() + ')'}">Discussion</h2>
+    <form sec:authorize="isAuthenticated()" th:action="@{/comments}" method="post" class="mb-4">
+      <input type="hidden" name="articleId" th:value="${article.id}">
+      <label for="comment" class="form-label">Add a comment</label>
+      <textarea id="comment" name="comment" class="form-control mb-2" rows="3" maxlength="2000" required></textarea>
+      <button class="btn btn-signal" type="submit">Post comment</button>
+      <span class="meta ms-2" sec:authorize="hasRole('READER')">Reader comments are reviewed before they appear.</span>
+    </form>
+    <p sec:authorize="isAnonymous()" class="mb-4"><a th:href="@{/login}">Log in</a> or <a th:href="@{/register}">create an account</a> to join the discussion.</p>
+
+    <div class="comment" th:each="c : ${comments}">
+      <div class="d-flex gap-3">
+        <span class="avatar" th:text="${@textUtils.initials(c.user.name)}">AB</span>
+        <div class="flex-grow-1">
+          <strong th:text="${c.user.name}">Name</strong> <span class="meta" th:text="${@dateUtils.timeAgo(c.createdAt)}">now</span>
+          <p class="mb-1" th:text="${c.comment}">Text</p>
+          <button sec:authorize="isAuthenticated()" class="btn btn-link btn-sm p-0" type="button" th:attr="data-reply-toggle='reply-' + ${c.id}">Reply</button>
+          <form th:id="${'reply-' + c.id}" sec:authorize="isAuthenticated()" th:action="@{/comments}" method="post" class="d-none mt-2">
+            <input type="hidden" name="articleId" th:value="${article.id}"><input type="hidden" name="parentId" th:value="${c.id}">
+            <textarea name="comment" class="form-control mb-2" rows="2" maxlength="2000" required aria-label="Reply"></textarea>
+            <button class="btn btn-sm btn-ink" type="submit">Post reply</button>
+          </form>
+        </div>
+      </div>
+      <div class="comment reply" th:each="r : ${c.replies}" th:if="${r.status.name() == 'APPROVED'}">
+        <strong th:text="${r.user.name}">Name</strong> <span class="meta" th:text="${@dateUtils.timeAgo(r.createdAt)}">now</span>
+        <p class="mb-0" th:text="${r.comment}">Reply</p>
+      </div>
+    </div>
+    <p class="text-soft" th:if="${comments.isEmpty()}">No comments yet. Start the conversation.</p>
+  </section>
+
+  <section class="mt-5" th:if="${!related.isEmpty()}">
+    <h2 class="section-title">Related articles</h2>
+    <div class="row g-4"><div class="col-md-6" th:each="a : ${related}"><div th:replace="~{fragments/layout :: articleCard(${a})}"></div></div></div>
+  </section>
+</article>
+</div>
+<div id="article-meta" hidden th:if="${article.status.name() == 'PUBLISHED'}" th:attr="data-article-id=${article.id},data-slug=${article.slug}"></div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:src="@{/js/comment.js}"></script>
+<script th:src="@{/js/article.js}"></script>
+</body>
+</html>

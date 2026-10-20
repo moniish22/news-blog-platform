@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${category.name})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<h1 th:text="${category.name}">Category</h1>
+<p class="text-soft mb-4" th:text="${category.description}">Description</p>
+<div class="row g-4">
+  <div class="col-md-6 col-lg-4" th:each="a : ${page.content}"><div th:replace="~{fragments/layout :: articleCard(${a})}"></div></div>
+</div>
+<p class="text-soft" th:if="${page.empty}">No published articles in this category yet.</p>
+<nav th:replace="~{fragments/layout :: pager(${page}, ${pageUrl})}"></nav>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

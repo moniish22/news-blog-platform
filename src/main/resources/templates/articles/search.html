@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Search')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<h1 class="mb-3">Search</h1>
+<form th:action="@{/search}" method="get" class="row g-2 mb-4">
+  <div class="col-md-7"><input type="search" name="q" th:value="${q}" class="form-control" placeholder="Search titles, content and tags" aria-label="Search"></div>
+  <div class="col-md-3">
+    <select name="category" class="form-select" aria-label="Category">
+      <option value="">All categories</option>
+      <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}" th:selected="${selectedCategory != null and selectedCategory == c.id}">Cat</option>
+    </select>
+  </div>
+  <div class="col-md-2 d-grid"><button class="btn btn-ink" type="submit">Search</button></div>
+</form>
+<p class="text-soft" th:text="${page.totalElements + ' result' + (page.totalElements == 1 ? '' : 's')}">0 results</p>
+<div class="row g-4">
+  <div class="col-md-6 col-lg-4" th:each="a : ${page.content}"><div th:replace="~{fragments/layout :: articleCard(${a})}"></div></div>
+</div>
+<p th:if="${page.empty}">No articles match. Try a shorter phrase or another category.</p>
+<nav th:replace="~{fragments/layout :: pager(${page}, ${pageUrl})}"></nav>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

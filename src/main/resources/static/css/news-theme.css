@@ -1,0 +1,32 @@
+/* Theme tokens: ink on cool paper, one emerald accent, amber only for flags. */
+:root {
+  --ink: #14181f;
+  --ink-soft: #4a5260;
+  --paper: #fbfcfd;
+  --mist: #eef2f5;
+  --line: #d9e0e6;
+  --signal: #0b7a5b;
+  --signal-dark: #075c44;
+  --flag: #f2b705;
+  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-ui: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bs-body-font-family: var(--font-ui);
+  --bs-body-color: var(--ink);
+  --bs-body-bg: var(--paper);
+  --bs-link-color: var(--signal-dark);
+  --bs-link-hover-color: var(--ink);
+  --bs-border-color: var(--line);
+}
+body { font-family: var(--font-ui); background: var(--paper); color: var(--ink); }
+h1, h2, h3, h4, .display-font { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.01em; }
+a { text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--flag); outline-offset: 2px; }
+.text-soft { color: var(--ink-soft) !important; }
+
+.btn-signal { background: var(--signal); border-color: var(--signal); color: #fff; }
+.btn-signal:hover, .btn-signal:focus { background: var(--signal-dark); border-color: var(--signal-dark); color: #fff; }
+.btn-ink { background: var(--ink); border-color: var(--ink); color: #fff; }
+.btn-ink:hover { background: #2a3140; color: #fff; }
+.btn-outline-ink { border-color: var(--ink); color: var(--ink); }
+.btn-outline-ink:hover { background: var(--ink); color: #fff; }
+.badge.bg-warning, .badge.bg-info { color: var(--ink) !important; }

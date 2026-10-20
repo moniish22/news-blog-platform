@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Admin console')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<h1 class="mb-4">Admin console</h1>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Users</div><div class="num" th:text="${stats['totalUsers']}">0</div></div></div><div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Articles</div><div class="num" th:text="${stats['totalArticles']}">0</div></div></div><div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Comments</div><div class="num" th:text="${stats['totalComments']}">0</div></div></div><div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Confirmed subscribers</div><div class="num" th:text="${stats['verifiedSubscribers']}">0</div></div></div>
+</div>
+<h2 class="h4">Users by role</h2>
+<p><span class="badge bg-dark me-2 fs-6" th:each="r : ${byRole}" th:text="${r.key + ': ' + r.value}">ROLE: 0</span></p>
+<div class="row g-3 mt-2">
+  <div class="col-md-3"><a class="side-box d-block text-decoration-none" th:href="@{/admin/users}"><strong>Manage users</strong><div class="meta">Change roles, disable accounts</div></a></div>
+  <div class="col-md-3"><a class="side-box d-block text-decoration-none" th:href="@{/admin/analytics}"><strong>Analytics</strong><div class="meta">Views, trends, CSV export</div></a></div>
+  <div class="col-md-3"><a class="side-box d-block text-decoration-none" th:href="@{/admin/settings}"><strong>Settings</strong><div class="meta">Current site configuration</div></a></div>
+  <div class="col-md-3"><a class="side-box d-block text-decoration-none" th:href="@{/moderation/comments}"><strong>Moderation</strong><div class="meta">Approve or reject comments</div></a></div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

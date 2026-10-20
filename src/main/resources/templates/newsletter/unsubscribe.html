@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Unsubscribe')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="auth-card">
+  <h1 class="h3">Unsubscribe</h1>
+  <div th:if="${!valid}"><p>This unsubscribe link is not valid.</p></div>
+  <form th:if="${valid}" th:action="@{/newsletter/unsubscribe}" method="post">
+    <p class="text-soft">You will stop receiving NewsBlog emails.</p>
+    <input type="hidden" name="token" th:value="${token}">
+    <button class="btn btn-ink w-100" type="submit">Unsubscribe me</button>
+  </form>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

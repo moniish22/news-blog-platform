@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Moderate comments')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<h1 class="mb-3">Moderate comments</h1>
+<ul class="nav nav-tabs mb-3">
+  <li class="nav-item"><a class="nav-link" th:classappend="${status.name() == 'PENDING'} ? 'active'" th:href="@{/moderation/comments(status=PENDING)}" th:text="${'Pending (' + pendingCount + ')'}">Pending</a></li>
+  <li class="nav-item"><a class="nav-link" th:classappend="${status.name() == 'APPROVED'} ? 'active'" th:href="@{/moderation/comments(status=APPROVED)}" th:text="${'Approved (' + approvedCount + ')'}">Approved</a></li>
+  <li class="nav-item"><a class="nav-link" th:classappend="${status.name() == 'REJECTED'} ? 'active'" th:href="@{/moderation/comments(status=REJECTED)}" th:text="${'Rejected (' + rejectedCount + ')'}">Rejected</a></li>
+</ul>
+<div class="side-box mb-3" th:each="c : ${page.content}">
+  <div class="d-flex justify-content-between flex-wrap gap-2">
+    <div><strong th:text="${c.user.name}">User</strong> <span class="meta" th:text="${'on ' + c.article.title + ' · ' + @dateUtils.timeAgo(c.createdAt)}">Article</span>
+      <span class="badge bg-secondary ms-1" th:if="${c.parent != null}">Reply</span></div>
+    <a class="small" th:href="@{/article/{s}(s=${c.article.slug})}">Open article</a>
+  </div>
+  <p class="my-2" th:text="${c.comment}">Text</p>
+  <div class="d-flex gap-2">
+    <form th:if="${c.status.name() != 'APPROVED'}" th:action="@{/moderation/comments/{id}/approve(id=${c.id})}" method="post"><input type="hidden" name="status" th:value="${status}"><button class="btn btn-sm btn-signal" type="submit">Approve</button></form>
+    <form th:if="${c.status.name() != 'REJECTED'}" th:action="@{/moderation/comments/{id}/reject(id=${c.id})}" method="post"><input type="hidden" name="status" th:value="${status}"><button class="btn btn-sm btn-outline-secondary" type="submit">Reject</button></form>
+    <form th:action="@{/moderation/comments/{id}/delete(id=${c.id})}" method="post" data-confirm="Delete this comment and its replies?"><input type="hidden" name="status" th:value="${status}"><button class="btn btn-sm btn-outline-danger" type="submit">Delete</button></form>
+  </div>
+</div>
+<p class="text-soft" th:if="${page.empty}">Nothing here. You are all caught up.</p>
+<nav th:replace="~{fragments/layout :: pager(${page}, ${pageUrl})}"></nav>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

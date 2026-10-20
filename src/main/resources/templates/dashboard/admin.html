@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Admin dashboard')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h1 class="mb-0">Dashboard</h1>
+  <div class="d-flex gap-2"><a class="btn btn-signal" th:href="@{/author/articles/new}">New article</a><a class="btn btn-outline-ink" th:href="@{/admin}">Admin console</a></div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Total articles</div><div class="num" th:text="${stats['totalArticles']}">0</div></div></div><div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Published</div><div class="num" th:text="${stats['publishedArticles']}">0</div></div></div><div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Drafts</div><div class="num" th:text="${stats['draftArticles']}">0</div></div></div><div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Total views</div><div class="num" th:text="${stats['totalViews']}">0</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card warn"><div class="meta">Pending review</div><div class="num" th:text="${stats['pendingArticles']}">0</div></div></div><div class="col-6 col-lg-3"><div class="stat-card warn"><div class="meta">Comments awaiting approval</div><div class="num" th:text="${stats['pendingComments']}">0</div></div></div><div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Subscribers</div><div class="num" th:text="${stats['subscribers']}">0</div></div></div><div class="col-6 col-lg-3"><div class="stat-card"><div class="meta">Views today</div><div class="num" th:text="${stats['viewsToday']}">0</div></div></div>
+</div>
+<p class="mb-4"><span class="me-2">Statuses:</span><span class="badge me-1" th:each="s : ${statuses}" th:classappend="${'bg-' + s.badge}" th:text="${s.label}">Status</span></p>
+<h2 class="h4">All articles</h2>
+<div th:replace="~{fragments/layout :: articleTable(${page.content}, true)}"></div>
+<nav th:replace="~{fragments/layout :: pager(${page}, ${pageUrl})}"></nav>
+<h2 class="h4 mt-4">Latest comments</h2>
+<div class="list-group">
+  <div class="list-group-item" th:each="c : ${recentComments}"><strong th:text="${c.user.name}">User</strong> on <a th:href="@{/article/{s}(s=${c.article.slug})}" th:text="${c.article.title}">Article</a>
+    <span class="badge bg-secondary ms-1" th:text="${c.status}">Status</span><div class="small text-soft" th:text="${@textUtils.truncate(c.comment, 140)}">Text</div></div>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

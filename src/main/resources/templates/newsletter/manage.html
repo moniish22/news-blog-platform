@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Newsletter')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h1 class="mb-0">Newsletter</h1>
+  <a class="btn btn-signal" th:href="@{/newsletter/send}" th:text="${'Send a newsletter to ' + recipients + ' subscribers'}">Send</a>
+</div>
+<h2 class="h4">Subscribers</h2>
+<div class="table-responsive">
+<table class="table bg-white align-middle">
+  <thead><tr><th>Email</th><th>Status</th><th>Subscribed</th><th class="text-end">Actions</th></tr></thead>
+  <tbody>
+    <tr th:each="s : ${page.content}">
+      <td th:text="${s.email}">email</td>
+      <td>
+        <span class="badge" th:classappend="${s.active ? 'bg-success' : 'bg-secondary'}" th:text="${s.active ? 'Active' : 'Unsubscribed'}">Active</span>
+        <span class="badge bg-warning" th:if="${!s.verified}">Not confirmed</span>
+      </td>
+      <td th:text="${@dateUtils.format(s.subscribedAt)}">Date</td>
+      <td class="text-end text-nowrap">
+        <form class="d-inline" th:action="@{/newsletter/manage/{id}/toggle(id=${s.id})}" method="post"><button class="btn btn-sm btn-outline-ink" type="submit" th:text="${s.active ? 'Deactivate' : 'Activate'}">Toggle</button></form>
+        <form class="d-inline" th:action="@{/newsletter/manage/{id}/delete(id=${s.id})}" method="post" data-confirm="Remove this subscriber?"><button class="btn btn-sm btn-outline-danger" type="submit">Remove</button></form>
+      </td>
+    </tr>
+    <tr th:if="${page.empty}"><td colspan="4" class="text-center text-soft py-4">No subscribers yet.</td></tr>
+  </tbody>
+</table>
+</div>
+<nav th:replace="~{fragments/layout :: pager(${page}, ${pageUrl})}"></nav>
+<h2 class="h4 mt-5">Recent campaigns</h2>
+<div class="table-responsive">
+<table class="table bg-white">
+  <thead><tr><th>Subject</th><th>Status</th><th>Recipients</th><th>Sent</th></tr></thead>
+  <tbody>
+    <tr th:each="n : ${campaigns}"><td th:text="${n.subject}">Subject</td><td th:text="${n.status}">SENT</td><td th:text="${n.recipientCount}">0</td><td th:text="${@dateUtils.formatDateTime(n.sentAt)}">Date</td></tr>
+    <tr th:if="${campaigns.isEmpty()}"><td colspan="4" class="text-center text-soft py-3">No campaigns sent yet.</td></tr>
+  </tbody>
+</table>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

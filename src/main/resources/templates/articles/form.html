@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<form th:fragment="form" th:action="@{${formAction}}" th:object="${articleDto}" method="post" novalidate>
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input id="title" type="text" th:field="*{title}" class="form-control form-control-lg" th:errorclass="is-invalid" maxlength="255">
+        <div class="invalid-feedback" th:errors="*{title}">Title error</div>
+      </div>
+      <div class="mb-3">
+        <label for="excerpt" class="form-label">Summary <span class="text-soft">(optional, auto-generated if empty)</span></label>
+        <textarea id="excerpt" th:field="*{excerpt}" class="form-control" th:errorclass="is-invalid" rows="2" maxlength="500"></textarea>
+        <div class="invalid-feedback" th:errors="*{excerpt}">Excerpt error</div>
+      </div>
+      <div class="mb-3">
+        <label for="content" class="form-label">Content</label>
+        <textarea id="content" th:field="*{content}" class="form-control" th:errorclass="is-invalid" rows="14"></textarea>
+        <div class="text-danger small mt-1" th:errors="*{content}">Content error</div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="side-box mb-3">
+        <label for="status" class="form-label">Status</label>
+        <select id="status" th:field="*{status}" class="form-select">
+          <option th:each="s : ${statusOptions}" th:value="${s}" th:text="${s.label}">Draft</option>
+        </select>
+        <div class="form-text">Authors can save drafts or submit for review. An editor publishes.</div>
+        <label for="scheduledAt" class="form-label mt-3">Publish at <span class="text-soft">(only for Scheduled)</span></label>
+        <input id="scheduledAt" type="datetime-local" th:field="*{scheduledAt}" class="form-control">
+        <div class="form-check mt-3" th:if="${canFeature}">
+          <input id="featured" type="checkbox" th:field="*{featured}" class="form-check-input">
+          <label for="featured" class="form-check-label">Feature on the home page</label>
+        </div>
+      </div>
+      <div class="side-box mb-3">
+        <label for="categoryId" class="form-label">Category</label>
+        <select id="categoryId" th:field="*{categoryId}" class="form-select">
+          <option value="">No category</option>
+          <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}">Category</option>
+        </select>
+        <label for="tagNames" class="form-label mt-3">Tags</label>
+        <input id="tagNames" type="text" th:field="*{tagNames}" class="form-control" placeholder="java, spring boot, mysql">
+        <div class="form-text">Separate tags with commas. New tags are created automatically.</div>
+        <label for="featuredImage" class="form-label mt-3">Featured image URL</label>
+        <input id="featuredImage" type="url" th:field="*{featuredImage}" class="form-control" placeholder="https://...">
+      </div>
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-signal btn-lg">Save article</button>
+        <a class="btn btn-outline-ink" th:href="@{/dashboard}">Cancel</a>
+      </div>
+    </div>
+  </div>
+</form>
+</body>
+</html>

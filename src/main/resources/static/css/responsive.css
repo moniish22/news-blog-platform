@@ -1,0 +1,12 @@
+@media (max-width: 991.98px) {
+  .search-form { display: none !important; }
+  .masthead .brand { font-size: 1.6rem; }
+  .prose { font-size: 1.1rem; }
+}
+@media (max-width: 575.98px) {
+  .comment.reply { margin-left: 1rem; }
+  .lead-story .dek { font-size: 1.15rem; }
+  .bar-row { grid-template-columns: 56px 1fr 32px; }
+  .auth-card { margin: 1rem; padding: 1.4rem; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }

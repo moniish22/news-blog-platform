@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Tags')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<h1 class="mb-4">Tags</h1>
+<div>
+  <span th:each="t : ${tags}" class="d-inline-flex align-items-center me-1">
+    <a class="tag-chip" th:href="@{/tags/{s}(s=${t.slug})}" th:text="${t.name + ' (' + t.articleCount + ')'}">tag</a>
+    <form sec:authorize="hasAnyRole('ADMIN','EDITOR')" th:action="@{/tags/{id}/delete(id=${t.id})}" method="post" data-confirm="Delete this tag from all articles?" class="mb-1 me-2">
+      <button class="btn btn-sm btn-link text-danger p-0" type="submit" th:attr="aria-label='Delete tag ' + ${t.name}">&times;</button>
+    </form>
+  </span>
+  <p class="text-soft" th:if="${tags.isEmpty()}">No tags yet.</p>
+</div>
+<form sec:authorize="hasAnyRole('ADMIN','EDITOR')" th:action="@{/tags}" method="post" class="side-box mt-5 d-flex gap-2">
+  <input type="text" name="name" class="form-control" placeholder="New tag" aria-label="New tag" maxlength="50" required>
+  <button class="btn btn-signal text-nowrap" type="submit">Add tag</button>
+</form>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

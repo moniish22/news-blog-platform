@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('My reading list')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main id="main" class="container py-4">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<h1 class="mb-4">My reading list</h1>
+<div class="row g-5">
+  <section class="col-lg-7">
+    <h2 class="section-title">Saved articles</h2>
+    <div class="list-group">
+      <div class="list-group-item d-flex justify-content-between align-items-center" th:each="a : ${saved}">
+        <a th:href="@{/article/{s}(s=${a.slug})}" th:text="${a.title}">Title</a>
+        <form th:action="@{/profile/saved/{id}/remove(id=${a.id})}" method="post"><button class="btn btn-sm btn-outline-secondary" type="submit">Remove</button></form>
+      </div>
+    </div>
+    <p class="text-soft" th:if="${saved.isEmpty()}">Nothing saved yet. Use "Save for later" on any article.</p>
+  </section>
+  <aside class="col-lg-5">
+    <h2 class="section-title">Recent comments</h2>
+    <div class="mb-3" th:each="c : ${myComments}">
+      <a th:href="@{/article/{s}(s=${c.article.slug})}" th:text="${c.article.title}">Article</a>
+      <span class="badge ms-1" th:classappend="${c.status.name() == 'APPROVED' ? 'bg-success' : 'bg-warning'}" th:text="${c.status}">Status</span>
+      <div class="small text-soft" th:text="${@textUtils.truncate(c.comment, 120)}">Text</div>
+    </div>
+    <p class="text-soft" th:if="${myComments.isEmpty()}">No comments yet.</p>
+    <a th:href="@{/comments/mine}">All my comments</a>
+  </aside>
+</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
