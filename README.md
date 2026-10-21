@@ -3,7 +3,7 @@
 A full-stack publishing platform built with **Spring Boot 3, Spring Security 6, Hibernate/JPA, MySQL and Thymeleaf**.
 
 Task: https://www.freeinternships.in/java-full-stack-internship/java-internship-online-free-news-blog-platform-jv-mc-002.php  (Task code JV-MC-002)
-**Live demo:**https://news-blog-platform-production.up.railway.app"
+**Live demo:**https://news-blog-platform-production.up.railway.app
 **Demo video:**
 ## Features
 
